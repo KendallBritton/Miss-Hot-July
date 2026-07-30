@@ -1,0 +1,564 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <title>You Got a Message</title>
+    <link rel="stylesheet" href="../styles.css" />
+    <style>
+      body {
+        background: linear-gradient(180deg, #6fb7ff 0%, #9fd8ff 30%, #c4e6ff 58%, #daeeff 100%);
+        color: #0d2f5c;
+        font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace;
+        overflow-x: hidden;
+      }
+
+      body::before {
+        content: '';
+        position: fixed;
+        inset: 0;
+        background-image:
+          linear-gradient(180deg, transparent 52%, #8fd55b 52%, #72b13a 58%, #5f9830 66%, #457221 74%, #2d5314 100%),
+          radial-gradient(ellipse 820px 280px at 18% 74%, #9ee671 0%, #8aca50 42%, transparent 46%),
+          radial-gradient(ellipse 760px 340px at 48% 78%, #7fc14c 0%, #79b142 38%, transparent 42%),
+          radial-gradient(ellipse 900px 320px at 78% 70%, #ace979 0%, #8cc65a 36%, transparent 40%),
+          radial-gradient(ellipse 420px 180px at 32% 88%, #5e9e2b 0%, #548a28 33%, transparent 37%),
+          radial-gradient(ellipse 360px 160px at 63% 92%, #74b444 0%, #679f38 33%, transparent 37%);
+        background-repeat: no-repeat;
+        background-size: cover;
+        background-position: center bottom;
+        opacity: 0.98;
+        pointer-events: none;
+        z-index: -2;
+      }
+
+      .surface {
+        position: relative;
+      }
+
+      .cloud {
+        position: absolute;
+        height: 80px;
+        aspect-ratio: 1.8;
+        --g: radial-gradient(50% 50%, #000 98%, #0000) no-repeat;
+        mask: var(--g) 100% 100%/30% 60%,var(--g) 70% 0/50% 100%,var(--g) 0 100%/36% 68%,var(--g) 27% 18%/26% 40%,linear-gradient(#000 0 0) bottom/67% 58% no-repeat;
+        background: linear-gradient(180deg, #ffffff 0%, #f2f2f5 45%, #d9d9dd 100%);
+        z-index: -2;
+      }
+
+      .cloud.left-1 {
+        left: -170px;
+        top: 150px;
+        animation: floatCloudLeft 5.4s ease-in-out infinite;
+      }
+
+      .cloud.left-2 {
+        left: -120px;
+        top: 200px;
+        animation: floatCloudLeft 6.2s ease-in-out infinite;
+        transform: scale(0.85);
+      }
+
+      .cloud.right-1 {
+        right: -170px;
+        top: 30px;
+        animation: floatCloudRight 5.8s ease-in-out infinite;
+      }
+
+      .cloud.right-2 {
+        right: -125px;
+        top: 90px;
+        animation: floatCloudRight 6.4s ease-in-out infinite;
+        transform: scale(0.9);
+      }
+
+      .cloud.right-3 {
+        right: -70px;
+        top: 62px;
+        animation: floatCloudRight 5.2s ease-in-out infinite;
+        transform: scale(0.8);
+      }
+
+      @keyframes floatCloudLeft {
+        0%, 100% { transform: translateY(0); }
+        50% { transform: translateY(-10px); }
+      }
+
+      @keyframes floatCloudRight {
+        0%, 100% { transform: translateY(0); }
+        50% { transform: translateY(-12px); }
+      }
+
+      .phone-frame {
+        background: #c0daf9;
+        border: 8px solid #3d7dd8;
+        border: 8px solid #3d7dd8;
+        border-radius: 24px;
+        width: min(100%, 420px);
+        max-width: 420px;
+        margin: 24px auto 0;
+        padding: 12px;
+        box-shadow: 0 18px 34px rgba(0, 45, 112, 0.3);
+      }
+
+      .lock-screen {
+        position: relative;
+        min-height: 560px;
+        border-radius: 14px;
+        overflow: hidden;
+        background: #e6f0ff;
+        border: 2px solid #8fb9f4;
+      }
+
+      .lock-screen::before {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background: repeating-linear-gradient(
+          180deg,
+          rgba(255, 255, 255, 0.18),
+          rgba(255, 255, 255, 0.18) 1px,
+          transparent 1px,
+          transparent 3px
+        );
+        pointer-events: none;
+      }
+
+      .window-bar {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 8px 12px;
+        background: #316ac5;
+        border-bottom: 2px solid #0f3c84;
+        color: #ffffff;
+        font-size: 0.9rem;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+      }
+
+      .window-bar .title {
+        font-weight: 700;
+      }
+
+      .window-controls {
+        display: flex;
+        gap: 8px;
+      }
+
+      .window-controls button {
+        width: 14px;
+        height: 14px;
+        border: 1px solid rgba(0, 0, 0, 0.16);
+        border-radius: 2px;
+        padding: 0;
+        cursor: pointer;
+        transition: transform 0.1s ease;
+      }
+
+      .window-controls button:active,
+      .xp-taskbar .start-button:active,
+      .xp-taskbar .task-item:active {
+        transform: translateY(1px) scale(0.96);
+      }
+
+      .window-controls button.close {
+        background: #f5625d;
+      }
+
+      .window-controls button.minimize {
+        background: #f5d04f;
+      }
+
+      .window-controls button.maximize {
+        background: #3bc23e;
+      }
+
+      .screen-top {
+        display: grid;
+        gap: 10px;
+        padding: 10px 14px 10px;
+        color: #1562b0;
+      }
+
+      .status-row {
+        display: flex;
+        justify-content: space-between;
+        font-size: 0.88rem;
+        letter-spacing: 0.05em;
+      }
+
+      .lock-title {
+        margin: 0;
+        text-align: center;
+        font-size: 1.1rem;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+      }
+
+      .lock-subtitle {
+        margin: 0 auto;
+        color: #2b62b5;
+        text-align: center;
+        font-size: 0.9rem;
+      }
+
+      .lock-cover,
+      .message-view {
+        position: absolute;
+        inset: 0;
+        display: grid;
+        grid-template-rows: auto auto 1fr auto;
+        gap: 14px;
+        padding: 18px 16px 18px;
+      }
+
+      .lock-cover {
+        background: linear-gradient(180deg, #d2e5ff 0%, #a0c6f9 100%);
+        border-bottom: 4px solid #3d7dd8;
+      }
+
+      .notification-card {
+        align-self: center;
+        border-radius: 12px;
+        background: #ffffff;
+        border: 2px solid #3d7dd8;
+        padding: 18px 16px;
+        box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.06);
+      }
+
+      .notification-card h2 {
+        margin: 0 0 8px;
+        font-size: 1rem;
+        letter-spacing: 0.08em;
+      }
+
+      .notification-card p {
+        margin: 0;
+        color: #0b3d73;
+        line-height: 1.6;
+        font-size: 0.95rem;
+      }
+
+      .unlock-hint {
+        display: flex;
+        justify-content: center;
+        gap: 10px;
+        align-items: center;
+        margin-top: 20px;
+      }
+
+      .unlock-hint span {
+        width: 14px;
+        height: 14px;
+        border-radius: 2px;
+        background: #3d7dd8;
+        animation: pixelPulse 1.4s infinite ease-in-out;
+      }
+
+      @keyframes pixelPulse {
+        0%, 100% { transform: translateY(0); opacity: 0.85; }
+        50% { transform: translateY(-4px); opacity: 0.45; }
+      }
+
+      .unlock-button {
+        margin: 0 auto;
+        padding: 12px 22px;
+        border-radius: 4px;
+        background: #5294ee;
+        border: 3px solid #2e67c6;
+        color: #ffffff;
+        font-size: 0.95rem;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        cursor: pointer;
+        box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.12);
+      }
+
+      .unlock-button:hover,
+      .unlock-button:focus-visible {
+        background: #3e75ce;
+      }
+
+      .message-view {
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 0.28s ease, transform 0.28s ease;
+        transform: translateY(12px);
+      }
+
+      .message-view.active {
+        opacity: 1;
+        pointer-events: auto;
+        transform: translateY(0);
+      }
+
+      .messages {
+        display: grid;
+        gap: 12px;
+        overflow-y: auto;
+        padding-right: 4px;
+      }
+
+      .bubble {
+        max-width: 84%;
+        padding: 12px 14px;
+        border-radius: 4px;
+        line-height: 1.5;
+        border: 2px solid #2b5ea0;
+      }
+
+      .bubble.incoming {
+        justify-self: start;
+        background: #ffffff;
+        color: #0b3d73;
+      }
+
+      .bubble.outgoing {
+        justify-self: end;
+        background: #cbe4ff;
+        color: #0a2a57;
+      }
+
+      .response-list {
+        display: grid;
+        gap: 10px;
+      }
+
+      .response-list button {
+        width: 100%;
+        text-align: left;
+        padding: 12px 14px;
+        border-radius: 4px;
+        border: 2px solid #2e67c6;
+        background: #e7f0ff;
+        color: #0f3f77;
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+        font-size: 0.85rem;
+        cursor: pointer;
+      }
+
+      .response-list button:hover,
+      .response-list button:focus-visible {
+        background: #d0e3ff;
+      }
+
+      .response-list button:disabled {
+        opacity: 0.45;
+        cursor: default;
+      }
+
+      .back-link {
+        display: block;
+        margin-top: 20px;
+        padding: 14px 0;
+        text-align: center;
+        color: #154b8d;
+        text-decoration: none;
+        letter-spacing: 0.08em;
+      }
+
+      .back-link:hover {
+        text-decoration: underline;
+      }
+
+      .xp-taskbar {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 8px 14px;
+        background: linear-gradient(180deg, #d3e6ff 0%, #a5c5fd 100%);
+        border-top: 2px solid #6f8fd1;
+        border-radius: 0 0 12px 12px;
+        margin-top: 10px;
+      }
+
+      .xp-taskbar .start-button {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 8px 12px;
+        background: #ffffff;
+        border: 2px solid #2e67c6;
+        border-radius: 4px;
+        color: #0f3f77;
+        font-weight: 700;
+        font-size: 0.9rem;
+        cursor: pointer;
+      }
+
+      .xp-taskbar .start-button::before {
+        content: 'Start';
+      }
+
+      .xp-taskbar .task-items {
+        display: flex;
+        gap: 8px;
+      }
+
+      .xp-taskbar .task-item {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-width: 42px;
+        padding: 8px 10px;
+        background: #dde9ff;
+        border: 2px solid #2e67c6;
+        border-radius: 4px;
+        color: #0f3f77;
+        text-transform: uppercase;
+        font-size: 0.78rem;
+        cursor: pointer;
+      }
+
+      .xp-taskbar .clock {
+        font-size: 0.92rem;
+        color: #0b3d73;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="surface">
+      <div class="cloud left-1"></div>
+      <div class="cloud left-2"></div>
+      <div class="cloud right-1"></div>
+      <div class="cloud right-2"></div>
+      <div class="cloud right-3"></div>
+      <div class="phone-frame">
+        <div class="lock-screen">
+          <div class="lock-cover" id="lockCover">
+          <div class="window-bar">
+            <div class="title">Lock Screen</div>
+            <div class="window-controls">
+              <button type="button" class="close" aria-label="Close"></button>
+              <button type="button" class="minimize" aria-label="Minimize"></button>
+              <button type="button" class="maximize" aria-label="Maximize"></button>
+            </div>
+          </div>
+          <div class="screen-top">
+            <div class="status-row">
+              <span>9:41</span>
+              <span>100%</span>
+            </div>
+            <h1 class="lock-title">You Got a Message</h1>
+            <p class="lock-subtitle">Swipe to unlock and read the chat.</p>
+          </div>
+
+          <div class="notification-card">
+              <h2>New message</h2>
+              <p>Someone says: "You free tonight?"</p>
+            </div>
+
+            <div class="unlock-hint">
+              <span></span>
+              <span></span>
+              <span></span>
+            </div>
+            <button class="unlock-button" id="unlockButton">Unlock</button>
+          </div>
+
+          <div class="message-view" id="messageView">
+            <div class="window-bar">
+              <div class="title">Message Center</div>
+              <div class="window-controls">
+                <button type="button" class="close" aria-label="Close"></button>
+                <button type="button" class="minimize" aria-label="Minimize"></button>
+                <button type="button" class="maximize" aria-label="Maximize"></button>
+              </div>
+            </div>
+            <div class="screen-top">
+              <div class="status-row">
+                <span>Cell</span>
+                <span>100%</span>
+              </div>
+              <p class="lock-subtitle">Chat with Alex</p>
+            </div>
+
+            <div class="messages" id="messages">
+              <div class="bubble incoming">Hey! You free tonight?</div>
+            </div>
+
+            <div class="response-list" id="responseList">
+              <button data-response="Sure, what time?">Sure, what time?</button>
+              <button data-response="I have plans, maybe another day.">I have plans, maybe another day.</button>
+              <button data-response="Tell me more first.">Tell me more first.</button>
+            </div>
+          </div>
+        </div>
+        <div class="xp-taskbar">
+          <button class="start-button" type="button" aria-label="Start menu"></button>
+          <div class="task-items">
+            <div class="task-item">Msg</div>
+            <div class="task-item">Feed</div>
+          </div>
+          <div class="clock">9:41 AM</div>
+        </div>
+        <a class="back-link" href="../index.html">Back to directory</a>
+      </div>
+    </div>
+
+    <script>
+      const unlockButton = document.getElementById('unlockButton');
+      const lockCover = document.getElementById('lockCover');
+      const messageView = document.getElementById('messageView');
+      const messages = document.getElementById('messages');
+      const responseList = document.getElementById('responseList');
+
+      const replyMap = {
+        'Sure, what time?': 'How about 7? There is a new rooftop spot.',
+        'I have plans, maybe another day.': 'No worries, we can do it later this week.',
+        'Tell me more first.': 'It’s a cozy cafe with live music. Want in?'
+      };
+
+      const followUps = {
+        'Sure, what time?': ['Perfect — I’ll save a spot for us.'],
+        'I have plans, maybe another day.': ['Okay, I’ll check back with you soon.'],
+        'Tell me more first.': ['Yep! It’s across the park and has neon lights.']
+      };
+
+      function appendBubble(text, type) {
+        const bubble = document.createElement('div');
+        bubble.className = `bubble ${type}`;
+        bubble.textContent = text;
+        messages.appendChild(bubble);
+        messages.scrollTop = messages.scrollHeight;
+      }
+
+      function showMessageView() {
+        lockCover.style.opacity = '0';
+        lockCover.style.pointerEvents = 'none';
+        messageView.classList.add('active');
+      }
+
+      unlockButton.addEventListener('click', showMessageView);
+
+      responseList.addEventListener('click', event => {
+        const button = event.target.closest('button');
+        if (!button) return;
+        const response = button.dataset.response;
+        appendBubble(response, 'outgoing');
+        button.disabled = true;
+        button.style.opacity = '0.45';
+        button.style.cursor = 'default';
+
+        setTimeout(() => {
+          appendBubble(replyMap[response], 'incoming');
+          if (followUps[response]) {
+            followUps[response].forEach((line, index) => {
+              setTimeout(() => appendBubble(line, 'incoming'), 600 * (index + 1));
+            });
+          }
+        }, 550);
+      });
+
+      const taskButtons = document.querySelectorAll('.xp-taskbar .start-button, .xp-taskbar .task-item, .window-controls button');
+      taskButtons.forEach(button => {
+        button.addEventListener('click', () => {
+          button.classList.add('clicked');
+          setTimeout(() => button.classList.remove('clicked'), 120);
+        });
+      });
+    </script>
+  </body>
+</html>

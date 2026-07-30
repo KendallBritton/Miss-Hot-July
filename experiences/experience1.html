@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <title>Morning Glow</title>
+    <link rel="stylesheet" href="../styles.css" />
+  </head>
+  <body>
+    <div class="surface">
+      <header class="app-header">
+        <div>
+          <p class="eyebrow">Experience 01</p>
+          <h1>Morning Glow</h1>
+          <p class="description">Drag the slider to shift the mood from dawn pink to cool blue.</p>
+        </div>
+      </header>
+
+      <main>
+        <section class="card" style="padding: 28px;">
+          <div class="card-label">Mood</div>
+          <div class="mood-preview" id="moodPreview">#ff9aa2</div>
+          <input id="colorRange" type="range" min="0" max="100" value="24" aria-label="Mood color slider" />
+          <p class="small-note" id="moodText">Soft sunrise pink for a warm start.</p>
+        </section>
+
+        <a class="card" href="../index.html" style="text-align:center;">Back to directory</a>
+      </main>
+    </div>
+
+    <script>
+      const preview = document.getElementById('moodPreview');
+      const moodText = document.getElementById('moodText');
+      const range = document.getElementById('colorRange');
+
+      const stops = [
+        { color: '#ff9aa2', label: 'Soft sunrise pink for a warm start.' },
+        { color: '#ffb7b2', label: 'A gentle glow with a touch of sweetness.' },
+        { color: '#ffd3b6', label: 'Warm peach notes, bright and cheerful.' },
+        { color: '#cde7ff', label: 'Cool morning blue for a calm energy.' },
+        { color: '#b5e5ff', label: 'Clear sky blue with fresh mobile clarity.' }
+      ];
+
+      function updateMood(value) {
+        const index = Math.floor((value / 100) * (stops.length - 1));
+        const stop = stops[index];
+        preview.style.background = stop.color;
+        preview.textContent = stop.color;
+        moodText.textContent = stop.label;
+      }
+
+      range.addEventListener('input', event => updateMood(event.target.value));
+      updateMood(range.value);
+    </script>
+  </body>
+</html>

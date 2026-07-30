@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <title>Hot Beats</title>
+    <link rel="stylesheet" href="../styles.css" />
+  </head>
+  <body>
+    <div class="surface">
+      <header class="app-header">
+        <div>
+          <p class="eyebrow">Experience 02</p>
+          <h1>Hot Beats</h1>
+          <p class="description">Tap the pulse button and feel the animated rhythm.</p>
+        </div>
+      </header>
+
+      <main>
+        <section class="card" style="padding: 24px;">
+          <div class="card-label">Play</div>
+          <button id="pulseButton" class="theme-button" style="width:100%;">Pulse</button>
+          <p class="small-note" id="pulseText">Ready when you are. Tap to pulse.</p>
+        </section>
+
+        <a class="card" href="../index.html" style="text-align:center;">Back to directory</a>
+      </main>
+    </div>
+
+    <script>
+      const pulseButton = document.getElementById('pulseButton');
+      const pulseText = document.getElementById('pulseText');
+
+      pulseButton.addEventListener('click', () => {
+        pulseButton.animate([
+          { transform: 'scale(1)' },
+          { transform: 'scale(1.08)' },
+          { transform: 'scale(1)' }
+        ], {
+          duration: 360,
+          easing: 'ease-out'
+        });
+
+        pulseText.textContent = 'Pulse activated — feel the motion!';
+        setTimeout(() => {
+          pulseText.textContent = 'Tap again to keep the beat going.';
+        }, 1400);
+      });
+    </script>
+  </body>
+</html>

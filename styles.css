@@ -1,0 +1,199 @@
+:root {
+  color-scheme: dark;
+  --bg: #040611;
+  --surface: rgba(12, 16, 30, 0.95);
+  --surface-strong: rgba(16, 20, 42, 0.96);
+  --text: #f6f7ff;
+  --muted: #adb5d3;
+  --border: rgba(255, 255, 255, 0.08);
+  --accent: #ff5b80;
+  --accent-soft: rgba(255, 91, 128, 0.18);
+  --card: rgba(10, 14, 28, 0.95);
+}
+
+html, body {
+  min-height: 100%;
+}
+
+body {
+  margin: 0;
+  font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  background: radial-gradient(circle at top, rgba(255, 91, 128, 0.18), transparent 35%),
+    radial-gradient(circle at 80% 10%, rgba(79, 198, 255, 0.16), transparent 28%),
+    linear-gradient(180deg, #080b1c 0%, #050711 100%);
+  color: var(--text);
+}
+
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  background: radial-gradient(circle at 40% 10%, rgba(255, 255, 255, 0.05), transparent 18%),
+    radial-gradient(circle at 90% 70%, rgba(255, 210, 130, 0.04), transparent 14%);
+  pointer-events: none;
+}
+
+.surface {
+  position: relative;
+  max-width: 780px;
+  margin: 0 auto;
+  padding: env(safe-area-inset-top) 20px 40px;
+}
+
+.app-header {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  align-items: start;
+  padding: 24px 0 16px;
+}
+
+.eyebrow {
+  margin: 0 0 12px;
+  color: var(--accent);
+  text-transform: uppercase;
+  letter-spacing: 0.16em;
+  font-size: 0.78rem;
+}
+
+h1 {
+  margin: 0;
+  font-size: clamp(2.1rem, 5vw, 3.3rem);
+  line-height: 1.02;
+}
+
+.description {
+  margin: 14px 0 0;
+  max-width: 38rem;
+  color: var(--muted);
+  line-height: 1.7;
+}
+
+.theme-button {
+  border: 1px solid var(--border);
+  background: rgba(255, 255, 255, 0.05);
+  color: var(--text);
+  padding: 12px 14px;
+  border-radius: 18px;
+  font-size: 1.05rem;
+  cursor: pointer;
+  transition: transform 0.2s ease, background 0.2s ease;
+}
+
+.theme-button:hover,
+.theme-button:focus-visible {
+  transform: translateY(-1px);
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.card-grid {
+  display: grid;
+  gap: 16px;
+  grid-template-columns: 1fr;
+  padding-top: 14px;
+}
+
+.card {
+  display: block;
+  padding: 22px;
+  border-radius: 28px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  text-decoration: none;
+  color: inherit;
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.18);
+  transition: transform 0.25s ease, border-color 0.25s ease, background 0.25s ease;
+}
+
+.card:hover,
+.card:focus-visible {
+  transform: translateY(-3px);
+  border-color: rgba(255, 91, 128, 0.35);
+}
+
+.card-label {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 16px;
+  background: var(--accent-soft);
+  color: var(--accent);
+  font-weight: 700;
+  margin-bottom: 18px;
+}
+
+.card h2 {
+  margin: 0 0 10px;
+  font-size: 1.3rem;
+}
+
+.card p {
+  margin: 0;
+  line-height: 1.75;
+  color: var(--muted);
+}
+
+.status-panel {
+  margin-top: 22px;
+  padding: 20px 20px 22px;
+  border-radius: 24px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.status-panel p {
+  margin: 0;
+}
+
+#greeting {
+  font-size: 1.03rem;
+  font-weight: 500;
+}
+
+.small-note {
+  margin-top: 10px;
+  color: var(--muted);
+}
+
+@media (min-width: 640px) {
+  .card-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (min-width: 980px) {
+  .surface {
+    padding: 40px 28px 48px;
+  }
+}
+
+html.light {
+  color-scheme: light;
+}
+
+html.light {
+  --bg: #f7f8fb;
+  --surface: rgba(255, 255, 255, 0.96);
+  --surface-strong: rgba(248, 249, 253, 0.98);
+  --text: #0d1729;
+  --muted: #58627c;
+  --border: rgba(13, 23, 41, 0.08);
+  --accent-soft: rgba(255, 91, 128, 0.14);
+  --card: rgba(255, 255, 255, 0.98);
+}
+
+html.light body {
+  background: radial-gradient(circle at top, rgba(255, 91, 128, 0.12), transparent 32%),
+    linear-gradient(180deg, #fcfdff 0%, #eef1f8 100%);
+}
+
+html.light .theme-button {
+  background: rgba(13, 23, 41, 0.06);
+}
+
+html.light .card,
+html.light .status-panel {
+  background: var(--surface);
+}
