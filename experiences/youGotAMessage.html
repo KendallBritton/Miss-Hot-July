@@ -6,11 +6,17 @@
     <title>You Got a Message</title>
     <link rel="stylesheet" href="../styles.css" />
     <style>
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
+      }
+
       html,
       body {
         margin: 0;
         padding: 0;
-        height: 100%;
+        min-height: 100%;
         overflow-x: hidden;
         scrollbar-width: none;
         -ms-overflow-style: none;
@@ -21,10 +27,12 @@
       }
 
       body {
+        min-height: 100vh;
         background: linear-gradient(180deg, #6fb7ff 0%, #9fd8ff 30%, #c4e6ff 58%, #daeeff 100%);
         color: #0d2f5c;
         font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace;
         overscroll-behavior: none;
+        touch-action: manipulation;
       }
 
       body::before {
@@ -53,7 +61,7 @@
         align-items: center;
         width: 100%;
         min-height: 100vh;
-        padding: 24px 0;
+        padding: env(safe-area-inset-top, 24px) 16px 32px;
       }
 
       .cloud {
@@ -112,13 +120,79 @@
       .phone-frame {
         background: #c0daf9;
         border: 8px solid #3d7dd8;
-        border: 8px solid #3d7dd8;
         border-radius: 24px;
         width: min(100%, 420px);
         max-width: 420px;
         margin: 0 auto;
         padding: 12px;
         box-shadow: 0 18px 34px rgba(0, 45, 112, 0.3);
+      }
+
+      .lock-screen {
+        padding: 0;
+      }
+
+      .screen-top {
+        padding: 10px 14px 8px;
+      }
+
+      .notification-card,
+      .response-list button,
+      .unlock-button {
+        min-width: 100%;
+      }
+
+      .messages {
+        max-height: 42vh;
+        overflow-y: auto;
+        padding-right: 6px;
+      }
+
+      .xp-taskbar {
+        flex-wrap: wrap;
+        gap: 8px;
+      }
+
+      .xp-taskbar .clock {
+        width: 100%;
+        text-align: center;
+      }
+
+      @media (max-width: 520px) {
+        .window-bar,
+        .screen-top,
+        .notification-card,
+        .response-list button,
+        .unlock-button,
+        .xp-taskbar {
+          padding-left: 12px;
+          padding-right: 12px;
+        }
+
+        .window-bar {
+          gap: 8px;
+          flex-wrap: wrap;
+        }
+
+        .notification-card {
+          padding: 16px 14px;
+        }
+
+        .unlock-button,
+        .response-list button {
+          padding: 12px 14px;
+          font-size: 0.9rem;
+        }
+
+        .xp-taskbar {
+          padding: 10px 12px;
+        }
+
+        .xp-taskbar .task-item,
+        .xp-taskbar .start-button {
+          min-width: unset;
+          padding: 8px 10px;
+        }
       }
 
       .lock-screen {
