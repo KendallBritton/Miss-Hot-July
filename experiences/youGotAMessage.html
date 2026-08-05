@@ -569,7 +569,7 @@
               <p class="lock-subtitle">Chat with Alex</p>
             </div>
 
-            <div class="messages" id="messages">
+            <div class="messages" id="messages" role="log" aria-live="polite">
               <div class="bubble incoming">Hey! You free tonight?</div>
             </div>
 
@@ -596,28 +596,6 @@
       const unlockButton = document.getElementById('unlockButton');
       const lockCover = document.getElementById('lockCover');
       const messageView = document.getElementById('messageView');
-      const messages = document.getElementById('messages');
-      const responseList = document.getElementById('responseList');
-
-      const replyMap = {
-        'Sure, what time?': 'How about 7? There is a new rooftop spot.',
-        'I have plans, maybe another day.': 'No worries, we can do it later this week.',
-        'Tell me more first.': 'It’s a cozy cafe with live music. Want in?'
-      };
-
-      const followUps = {
-        'Sure, what time?': ['Perfect — I’ll save a spot for us.'],
-        'I have plans, maybe another day.': ['Okay, I’ll check back with you soon.'],
-        'Tell me more first.': ['Yep! It’s across the park and has neon lights.']
-      };
-
-      function appendBubble(text, type) {
-        const bubble = document.createElement('div');
-        bubble.className = `bubble ${type}`;
-        bubble.textContent = text;
-        messages.appendChild(bubble);
-        messages.scrollTop = messages.scrollHeight;
-      }
 
       function showMessageView() {
         lockCover.style.opacity = '0';
@@ -625,25 +603,11 @@
         messageView.classList.add('active');
       }
 
-      unlockButton.addEventListener('click', showMessageView);
-
-      responseList.addEventListener('click', event => {
-        const button = event.target.closest('button');
-        if (!button) return;
-        const response = button.dataset.response;
-        appendBubble(response, 'outgoing');
-        button.disabled = true;
-        button.style.opacity = '0.45';
-        button.style.cursor = 'default';
-
-        setTimeout(() => {
-          appendBubble(replyMap[response], 'incoming');
-          if (followUps[response]) {
-            followUps[response].forEach((line, index) => {
-              setTimeout(() => appendBubble(line, 'incoming'), 600 * (index + 1));
-            });
-          }
-        }, 550);
+      unlockButton.addEventListener('click', () => {
+        showMessageView();
+        if (window.Conversation && typeof window.Conversation.init === 'function') {
+          window.Conversation.init();
+        }
       });
 
       const taskButtons = document.querySelectorAll('.xp-taskbar .start-button, .xp-taskbar .task-item, .window-controls button');
@@ -654,5 +618,7 @@
         });
       });
     </script>
+
+    <script src="youGotAMessage.conversation.js" defer></script>
   </body>
 </html>
