@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>My Love Letter</title>
+    <style>
+      :root {
+        color-scheme: dark;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        min-height: 100vh;
+        overflow: hidden;
+        font-family: Georgia, "Times New Roman", serif;
+        background: radial-gradient(circle at top, #ffdae7 0%, #ffd0e3 30%, #ff9ab7 70%, #ff6f95 100%);
+        color: #5c1637;
+      }
+
+      .hearts {
+        position: fixed;
+        inset: 0;
+        overflow: hidden;
+        pointer-events: none;
+      }
+
+      .heart {
+        position: absolute;
+        font-size: 1.6rem;
+        animation: drift 6s linear forwards;
+        opacity: 0.85;
+      }
+
+      @keyframes drift {
+        0% {
+          transform: translate3d(0, 0, 0) scale(0.4);
+          opacity: 0;
+        }
+        10% {
+          opacity: 1;
+        }
+        100% {
+          transform: translate3d(var(--tx), 110vh, 0) scale(1.2);
+          opacity: 0;
+        }
+      }
+
+      .letter {
+        position: relative;
+        z-index: 1;
+        max-width: 760px;
+        margin: 0 auto;
+        padding: 48px 24px 32px;
+        text-align: center;
+      }
+
+      .letter h1 {
+        font-size: clamp(2rem, 4vw, 3rem);
+        margin-bottom: 16px;
+      }
+
+      .letter p {
+        font-size: clamp(1.05rem, 2.2vw, 1.35rem);
+        line-height: 1.85;
+        margin: 0 0 16px;
+      }
+
+      .letter .signature {
+        margin-top: 28px;
+        font-size: 1.15rem;
+        font-weight: 700;
+      }
+
+      .back-link {
+        display: inline-block;
+        margin-top: 24px;
+        padding: 10px 16px;
+        border-radius: 999px;
+        background: rgba(255, 255, 255, 0.55);
+        color: #7a1c3f;
+        text-decoration: none;
+        font-weight: 700;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="hearts" id="hearts"></div>
+
+    <main class="letter">
+      <h1>My dearest Ariona,</h1>
+      <p>
+        You make the world feel softer, brighter, and more beautiful just by being in it.
+        I keep thinking about the way your smile can turn an ordinary moment into something unforgettable.
+      </p>
+      <p>
+        If I could, I would spend forever learning your favorite little things, holding your hand through the quiet days,
+        and making sure you always know how deeply I care for you.
+      </p>
+      <p>
+        You are the kind of love that makes a heart feel brave, warm, and full.
+        And if this moment is the beginning of something beautiful, I would be so lucky to walk toward it with you.
+      </p>
+      <p class="signature">Always yours, with all my heart.</p>
+      <a class="back-link" href="experiences/youGotAMessage.html" onclick="sessionStorage.setItem('youGotAMessageConversationState', sessionStorage.getItem('youGotAMessageConversationState') || '{}');">Back to the chat</a>
+    </main>
+
+    <script>
+      const hearts = document.getElementById('hearts');
+      const symbols = ['💗', '💖', '💕', '💘', '💝'];
+
+      function createHeart() {
+        const heart = document.createElement('div');
+        heart.className = 'heart';
+        heart.textContent = symbols[Math.floor(Math.random() * symbols.length)];
+        heart.style.left = `${Math.random() * 100}%`;
+        heart.style.top = '-6vh';
+        heart.style.setProperty('--tx', `${(Math.random() - 0.5) * 120}px`);
+        heart.style.animationDuration = `${5 + Math.random() * 3}s`;
+        hearts.appendChild(heart);
+
+        setTimeout(() => heart.remove(), 8000);
+      }
+
+      setInterval(createHeart, 220);
+      createHeart();
+    </script>
+  </body>
+</html>
