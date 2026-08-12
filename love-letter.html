@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
     <title>My Love Letter</title>
     <style>
       :root {
@@ -13,13 +13,19 @@
         box-sizing: border-box;
       }
 
+      html {
+        min-height: 100%;
+      }
+
       body {
         margin: 0;
         min-height: 100vh;
-        overflow: hidden;
+        overflow-x: hidden;
+        overflow-y: auto;
         font-family: Georgia, "Times New Roman", serif;
         background: radial-gradient(circle at top, #ffdae7 0%, #ffd0e3 30%, #ff9ab7 70%, #ff6f95 100%);
         color: #5c1637;
+        padding: env(safe-area-inset-top, 20px) 16px env(safe-area-inset-bottom, 20px);
       }
 
       .hearts {
@@ -54,9 +60,12 @@
         position: relative;
         z-index: 1;
         max-width: 760px;
+        width: min(100%, 760px);
         margin: 0 auto;
-        padding: 48px 24px 32px;
-        text-align: center;
+        padding: 36px 26px 34px;
+        text-align: left;
+        color: #5c1637;
+        text-shadow: 0 1px 1px rgba(255, 255, 255, 0.45);
       }
 
       .letter h1 {
@@ -67,24 +76,40 @@
       .letter p {
         font-size: clamp(1.05rem, 2.2vw, 1.35rem);
         line-height: 1.85;
-        margin: 0 0 16px;
+        margin: 0 0 18px;
       }
 
       .letter .signature {
-        margin-top: 28px;
+        margin-top: 24px;
         font-size: 1.15rem;
         font-weight: 700;
       }
 
       .back-link {
-        display: inline-block;
+        display: inline-flex;
         margin-top: 24px;
-        padding: 10px 16px;
+        padding: 12px 18px;
         border-radius: 999px;
-        background: rgba(255, 255, 255, 0.55);
+        background: rgba(255, 255, 255, 0.85);
         color: #7a1c3f;
         text-decoration: none;
         font-weight: 700;
+        box-shadow: 0 16px 28px rgba(92, 22, 55, 0.12);
+      }
+
+      @media (max-width: 520px) {
+        .letter {
+          padding: 28px 20px 28px;
+        }
+
+        .letter h1 {
+          font-size: 2rem;
+        }
+
+        .back-link {
+          width: 100%;
+          justify-content: center;
+        }
       }
     </style>
   </head>
@@ -92,20 +117,25 @@
     <div class="hearts" id="hearts"></div>
 
     <main class="letter">
-      <h1>My dearest Ariona,</h1>
+      <h1>Ariona,</h1>
       <p>
-        You make the world feel softer, brighter, and more beautiful just by being in it.
-        I keep thinking about the way your smile can turn an ordinary moment into something unforgettable.
+        Ever since we first met I could tell there was something familiar to your energy.
+        If this wasn't the case I doubt our first date would've lasted nine hours!
       </p>
       <p>
-        If I could, I would spend forever learning your favorite little things, holding your hand through the quiet days,
-        and making sure you always know how deeply I care for you.
+        Each time I'm blessed with your presence I can't help but be filled with various feelings of excitement and a rich eagerness
+        to know who Ariona Emilia Smith is at her very core.
       </p>
       <p>
-        You are the kind of love that makes a heart feel brave, warm, and full.
-        And if this moment is the beginning of something beautiful, I would be so lucky to walk toward it with you.
+        Meeting you truly felt like a breath of fresh air and I couldn't be more grateful that you decided to take a chance on the guy
+        you deemed as "cat boy." 
       </p>
-      <p class="signature">Always yours, with all my heart.</p>
+      <p>
+        If you're up for it I was hoping that I could maybe upgrade from "cat boy" to your boyfriend? :)
+      </p>
+      <p class="signature">
+        Ariona, would you do me the honor of being my girlfriend?? <span aria-hidden="true">&lt;3</span>
+      </p>
       <a class="back-link" href="experiences/youGotAMessage.html" onclick="sessionStorage.setItem('youGotAMessageConversationState', sessionStorage.getItem('youGotAMessageConversationState') || '{}');">Back to the chat</a>
     </main>
 

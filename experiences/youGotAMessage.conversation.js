@@ -55,33 +55,37 @@
     start: {
       incoming: 'Hey Ariona — I’ve been thinking about you all day. Can I say something honest?',
       choices: [
-        { id: 'r1a', text: 'Of course', next: 'r2a' }
+        { id: 'r1a', text: 'Well who else would it be?', next: 'r2a' }
       ]
     },
     r2a: {
-      incoming: 'I really like being around you, and I’d love to take you out sometime.',
+      incoming: 'You never know smh! Anyways, I really like being around you, and I was curious if you’d perhaps like to go on a date with me at some point?',
       choices: [
-        { id: 'r2a1', text: 'That sounds lovely', next: 'r3a' }
+        { id: 'r2a1', text: 'Mmmmmm it depends where you’re trying to take me Kendall', next: 'r3a' }
       ]
     },
     r3a: {
-      incoming: 'Would you let me take you on a real date — somewhere calm, somewhere warm, somewhere just for us?',
+      incoming: 'I was thinking maybe we could go to that Italian place in Uptown, and then maybe laugh over a sweet treat afterwards. If not we could always play a game of pool??',
       choices: [
-        { id: 'r3a1', text: 'Yes, I’d love that', next: 'ask' }
+        { id: 'r3a1', text: 'Don’t play with me Kendall... but I’m always down for some good food! Just make sure to buy me a margarita too ;)', next: 'ask' }
       ]
     },
     ask: {
-      incoming: 'Ariona — will you be my girlfriend?',
+      incoming: 'Perfect! I’ll head over in a little bit to pick you up! Take all the time you need to get ready.',
       choices: [
         {
           id: 'yes',
-          text: 'Yes, I’d love that',
+          text: 'Okay, sounds good! I’ll be ready in a few minutes.',
           next: 'r4a'
         }
       ]
     },
     r4a: {
-      incoming: 'Check out this link :)',
+      incoming: 'In the meantime, whenever you get a chance, check out this link I sent you. I think you’ll like it. :)',
+      next: 'r5a'
+    },
+    r5a: {
+      incoming: 'Check out this link',
       link: '../love-letter.html'
     }
   };
@@ -121,18 +125,26 @@
       const next = choice.next;
       const node = convo[next] || { incoming: '...', choices: [] };
 
-      if (node.link) {
-        const linkBubble = document.createElement('div');
-        linkBubble.className = 'bubble incoming';
-        linkBubble.innerHTML = `<a href="${node.link}" style="color: inherit; text-decoration: underline;">${node.incoming}</a>`;
-        messages.appendChild(linkBubble);
-        messages.scrollTop = messages.scrollHeight;
-        return;
-      }
+      const renderNode = (currentNode) => {
+        if (currentNode.link) {
+          const linkBubble = document.createElement('div');
+          linkBubble.className = 'bubble incoming';
+          linkBubble.innerHTML = `<a href="${currentNode.link}" style="color: inherit; text-decoration: underline;">${currentNode.incoming}</a>`;
+          messages.appendChild(linkBubble);
+          messages.scrollTop = messages.scrollHeight;
+          return;
+        }
 
-      typeBubble(node.incoming, 'incoming', () => {
-        renderChoices(node.choices);
-      });
+        typeBubble(currentNode.incoming, 'incoming', () => {
+          if (currentNode.next && (!currentNode.choices || currentNode.choices.length === 0)) {
+            renderNode(convo[currentNode.next] || { incoming: '...', choices: [] });
+          } else {
+            renderChoices(currentNode.choices);
+          }
+        });
+      };
+
+      renderNode(node);
     }, 450);
   }
 

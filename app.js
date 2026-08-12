@@ -1,42 +1,28 @@
-const greetingElement = document.getElementById('greeting');
-const themeButton = document.getElementById('themeToggle');
+const surpriseButton = document.getElementById('surpriseButton');
 
-function getTimeGreeting() {
-  const hour = new Date().getHours();
-  if (hour < 5) return 'A quiet night, perfect for a glow-up experience.';
-  if (hour < 12) return 'Good morning — start the day with mobile-first style.';
-  if (hour < 18) return 'Good afternoon — swipe into your next experience.';
-  return 'Good evening — unwind with our curated mobile stories.';
-}
+function spawnCuteBurst() {
+  const container = document.querySelector('.surface') || document.body;
+  const burst = document.createElement('div');
+  burst.className = 'cute-burst';
 
-function updateGreeting() {
-  if (!greetingElement) return;
-  greetingElement.textContent = getTimeGreeting();
-}
+  const icons = ['💚', '✨', '🌿', '🍃', '🌼'];
+  const count = 8 + Math.floor(Math.random() * 5);
 
-function setTheme(isLight) {
-  document.documentElement.classList.toggle('light', isLight);
-  if (themeButton) {
-    themeButton.textContent = isLight ? '🌙' : '☀️';
-    themeButton.setAttribute('aria-label', isLight ? 'Switch to dark theme' : 'Switch to light theme');
+  for (let i = 0; i < count; i += 1) {
+    const icon = document.createElement('span');
+    icon.className = 'burst-item';
+    icon.textContent = icons[Math.floor(Math.random() * icons.length)];
+    icon.style.left = `${10 + Math.random() * 80}%`;
+    icon.style.top = `${20 + Math.random() * 60}%`;
+    icon.style.fontSize = `${18 + Math.random() * 18}px`;
+    icon.style.animationDelay = `${Math.random() * 0.4}s`;
+    burst.appendChild(icon);
   }
-  localStorage.setItem('miss-hot-theme', isLight ? 'light' : 'dark');
+
+  container.appendChild(burst);
+  setTimeout(() => burst.remove(), 2600);
 }
 
-function toggleTheme() {
-  const isLight = document.documentElement.classList.contains('light');
-  setTheme(!isLight);
+if (surpriseButton) {
+  surpriseButton.addEventListener('click', spawnCuteBurst);
 }
-
-function initTheme() {
-  const stored = localStorage.getItem('miss-hot-theme');
-  const prefersLight = window.matchMedia('(prefers-color-scheme: light)').matches;
-  setTheme(stored === 'light' || (stored === null && prefersLight));
-}
-
-if (themeButton) {
-  themeButton.addEventListener('click', toggleTheme);
-}
-
-updateGreeting();
-initTheme();

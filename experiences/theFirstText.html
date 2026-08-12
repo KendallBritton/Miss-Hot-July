@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <title>Message Thread</title>
+    <link rel="stylesheet" href="../styles.css" />
+    <style>
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
+      }
+
+      html,
+      body {
+        margin: 0;
+        padding: 0;
+        min-height: 100%;
+        overflow-x: hidden;
+        scrollbar-width: none;
+      }
+
+      body::-webkit-scrollbar {
+        display: none;
+      }
+
+      body {
+        min-height: 100vh;
+        background: radial-gradient(circle at top, #f4f8ff 0%, #e6efff 40%, #dfe8fc 100%);
+        color: #0d2f5c;
+        font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+        overscroll-behavior: none;
+        touch-action: manipulation;
+      }
+
+      body::before {
+        content: '';
+        position: fixed;
+        inset: 0;
+        background: radial-gradient(circle at top center, rgba(255, 255, 255, 0.45), transparent 45%),
+          linear-gradient(180deg, rgba(255, 255, 255, 0.8), rgba(255, 255, 255, 0));
+        pointer-events: none;
+        z-index: -2;
+      }
+
+      .surface {
+        position: relative;
+        display: flex;
+        justify-content: center;
+        align-items: flex-start;
+        width: 100%;
+        min-height: 100vh;
+        padding: env(safe-area-inset-top, 24px) 16px calc(env(safe-area-inset-bottom, 24px) + 12px);
+        background: radial-gradient(circle at top, rgba(255, 255, 255, 0.85), rgba(244, 248, 255, 0.95) 48%, transparent 100%);
+      }
+
+      .phone-frame {
+        background: #f7f9ff;
+        border: 1px solid rgba(96, 123, 183, 0.16);
+        border-radius: 42px;
+        width: min(100%, 420px);
+        max-width: 420px;
+        margin: 0 auto;
+        padding: 0;
+        box-shadow: 0 40px 80px rgba(20, 45, 99, 0.16);
+        min-height: calc(100vh - 72px);
+        overflow: hidden;
+      }
+
+      .status-bar {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 14px 16px 10px;
+        background: linear-gradient(180deg, rgba(255, 255, 255, 0.92), rgba(245, 248, 255, 0.8));
+        border-bottom: 1px solid rgba(96, 123, 183, 0.12);
+      }
+
+      .status-bar .signal,
+      .status-bar .battery {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        color: #4c5d8c;
+        font-size: 0.85rem;
+      }
+
+      .status-bar .signal span,
+      .status-bar .battery .level {
+        display: inline-block;
+        width: 6px;
+        height: 4px;
+        border-radius: 999px;
+        background: #4c5d8c;
+      }
+
+      .status-bar .battery span:not(.level) {
+        display: inline;
+        width: auto;
+        height: auto;
+      }
+
+      .status-bar .time {
+        font-size: 0.94rem;
+        font-weight: 700;
+        letter-spacing: 0.02em;
+      }
+
+      .header-row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 16px 18px 14px;
+        background: #ffffff;
+      }
+
+      .contact-info {
+        display: grid;
+        gap: 4px;
+      }
+
+      .contact-name {
+        font-size: 1rem;
+        font-weight: 700;
+        color: #15244f;
+      }
+
+      .contact-status {
+        font-size: 0.85rem;
+        color: #66759e;
+      }
+
+      .contact-action {
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+        background: #4adb86;
+        box-shadow: 0 0 0 3px rgba(74, 219, 134, 0.18);
+      }
+
+      .battery {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        color: #4c5d8c;
+        font-size: 0.85rem;
+      }
+
+      .battery .level {
+        width: 26px;
+        height: 10px;
+        border-radius: 999px;
+        border: 1px solid rgba(76, 93, 140, 0.2);
+        background: linear-gradient(90deg, #4c5d8c 70%, rgba(76, 93, 140, 0.12) 70%);
+      }
+
+      .message-view {
+        display: grid;
+        gap: 16px;
+        padding: 18px 18px 10px;
+        min-height: 0;
+      }
+
+      .messages {
+        display: grid;
+        gap: 14px;
+        max-height: calc(100vh - 250px);
+        overflow-y: auto;
+        -webkit-overflow-scrolling: touch;
+        touch-action: pan-y;
+        overscroll-behavior: contain;
+        padding-right: 8px;
+        padding-bottom: 18px;
+      }
+
+      .messages::-webkit-scrollbar {
+        width: 6px;
+      }
+
+      .messages::-webkit-scrollbar-track {
+        background: transparent;
+      }
+
+      .messages::-webkit-scrollbar-thumb {
+        background: rgba(60, 90, 186, 0.32);
+        border-radius: 999px;
+      }
+
+      .bubble {
+        max-width: 88%;
+        padding: 14px 16px;
+        border-radius: 24px;
+        line-height: 1.7;
+        white-space: pre-line;
+        word-break: break-word;
+        box-shadow: 0 14px 30px rgba(67, 87, 145, 0.06);
+        scroll-snap-align: start;
+      }
+
+      .bubble.incoming {
+        justify-self: start;
+        background: #ffffff;
+        color: #1f2f57;
+      }
+
+      .bubble.outgoing {
+        justify-self: end;
+        background: linear-gradient(135deg, #dde8ff 0%, #c6d6ff 100%);
+        color: #14254c;
+      }
+
+      .back-link {
+        display: block;
+        margin: 0 auto 16px;
+        width: fit-content;
+        padding: 12px 22px;
+        text-align: center;
+        color: #3c5aba;
+        background: rgba(60, 90, 186, 0.08);
+        border-radius: 999px;
+        text-decoration: none;
+        letter-spacing: 0.06em;
+        font-weight: 700;
+      }
+
+      .back-link:hover {
+        background: rgba(60, 90, 186, 0.14);
+      }
+
+      .home-indicator {
+        height: 5px;
+        width: 110px;
+        margin: 0 auto 14px;
+        border-radius: 999px;
+        background: rgba(20, 36, 77, 0.15);
+      }
+
+      @media (max-width: 600px) {
+        .surface {
+          padding: env(safe-area-inset-top, 14px) 12px calc(env(safe-area-inset-bottom, 18px) + 12px);
+        }
+
+        .phone-frame {
+          width: 100%;
+          max-width: 100%;
+          border-radius: 32px;
+          box-shadow: 0 28px 60px rgba(20, 45, 99, 0.14);
+        }
+
+        .status-bar,
+        .header-row,
+        .message-view,
+        .back-link {
+          padding-left: 12px;
+          padding-right: 12px;
+        }
+
+        .status-bar {
+          padding: 12px 12px 8px;
+        }
+
+        .status-bar .signal span,
+        .status-bar .battery span {
+          width: 5px;
+          height: 4px;
+        }
+
+        .status-bar .time {
+          font-size: 0.86rem;
+        }
+
+        .header-row {
+          gap: 10px;
+          padding: 14px 12px 12px;
+        }
+
+        .contact-name {
+          font-size: 0.98rem;
+        }
+
+        .contact-status {
+          font-size: 0.82rem;
+        }
+
+        .message-view {
+          padding: 12px;
+        }
+
+        .messages {
+          max-height: calc(100vh - 230px);
+        }
+
+        .bubble {
+          font-size: 0.92rem;
+          padding: 12px 14px;
+          max-width: 100%;
+        }
+
+        .back-link {
+          margin-bottom: 8px;
+          padding: 10px 18px;
+          font-size: 0.88rem;
+        }
+
+        .home-indicator {
+          width: 90px;
+          margin-bottom: 12px;
+        }
+      }
+
+      @media (max-width: 420px) {
+        .surface {
+          padding: env(safe-area-inset-top, 12px) 10px calc(env(safe-area-inset-bottom, 16px) + 10px);
+        }
+
+        .phone-frame {
+          border-radius: 28px;
+        }
+
+        .status-bar {
+          padding: 10px 10px 7px;
+        }
+
+        .status-bar .time {
+          font-size: 0.82rem;
+        }
+
+        .status-bar .signal span,
+        .status-bar .battery span {
+          width: 4px;
+          height: 3px;
+        }
+
+        .header-row {
+          padding: 12px 10px 10px;
+        }
+
+        .contact-name {
+          font-size: 0.92rem;
+        }
+
+        .contact-status {
+          font-size: 0.78rem;
+        }
+
+        .bubble {
+          font-size: 0.86rem;
+          padding: 10px 12px;
+        }
+
+        .back-link {
+          padding: 10px 16px;
+        }
+
+        .home-indicator {
+          width: 74px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="surface">
+      <div class="phone-frame">
+        <div class="status-bar">
+          <div class="signal">
+            <span></span><span></span><span></span><span></span>
+          </div>
+          <div class="time">9:41</div>
+          <div class="battery">
+            <span class="level"></span>
+            <span>100%</span>
+          </div>
+        </div>
+
+        <div class="header-row">
+          <div class="contact-info">
+            <div class="contact-name">Ariona</div>
+            <div class="contact-status">Online</div>
+          </div>
+          <div class="contact-action">●</div>
+        </div>
+
+        <div class="message-view">
+          <div class="messages" role="log" aria-live="polite">
+            <div class="bubble incoming">*Kendall has liked Ariona’s photo* @ Monday, May 4 10:01 AM</div>
+            <div class="bubble incoming">Ariona @ Monday May 4 5:52 PM: What’s your cat’s name?</div>
+            <div class="bubble outgoing">Kendall: That feisty/sassy yet loving little boy's name is Winston! What's your cat's name?</div>
+            <div class="bubble incoming">Ariona: Winston is such a cute name! Her name is Sylvie and she is definitely a sassy character</div>
+            <div class="bubble outgoing">Kendall: I'm from Winston Salem so he's named after that lol, but thank you! Sylvie's name definitely matches her adorable nature!</div>
+            <div class="bubble incoming">Ariona: All of my pets have names that start with s but she's the only one with a regular name</div>
+            <div class="bubble outgoing">Kendall: What other pets do you have and what are the non-regular names then?? And is there any significance behind them all starting with a S?</div>
+            <div class="bubble incoming">Ariona @ Tuesday May 5 10:28 AM: They are family pets, I have one dog l used to have two she recently passed. Her name was Spree and her brother's name is spaz. There's no significance it just sort of happened that way. We got spaz first and we named him that because the first night we had him if you picked him up he would wiggle and would not sit still.
+Then a couple of days later I was woken up by my calling for his sister which was a surprise because at the time we only had him. She was calling for sprinkle and I refused to have a dog named sprinkle, but she was named that because she had an excitable bladder and would pee everywhere. When I would come home from school I would have to run outside to say hi to her</div>
+            <div class="bubble outgoing">Kendall: I'm sorry to hear that one of your dogs passed away recently but the story behind their names are both really sweet! Also it's funny that you absolutely were not going for the name Sprinkle. What type of dogs were they? And based off the story it sounds like they might've been rescue dogs but I could have interpreted that wrong.</div>
+            <div class="bubble outgoing">Kendall: My family has only had one dog during my time here on this earth and then Winston has a sister that we unfortunately have to separate from when I got out of my last relationship, but her name is Charlotte and is the sweetest and goofiest kitty you'll ever meet</div>
+            <div class="bubble incoming">Ariona: It's no problem she was very old. They weren't rescued. Unfortunately the story about getting them is also kinda sad, we got spaz first as a gift the day after our first dog died. Then my mom got his sister like two days later because she felt bad that he was separated from her. They're miniature cockier spaniels.
+But dang you had to lose one in the custody battle, sorry about that.</div>
+            <div class="bubble outgoing">Kendall: Yeah definitely a bittersweet kinda situation in that sense then, but I'm sure you all gave her the very best life possible filled with love and treats! It's crazy because the dog I had as a kid was a black cocker spaniel we named Tara.
+Yeah unfortunately I had to lose out on her, but I just used it as a chance to be a better dad to Winston because I know he really missed her too. They were different litters, same dad different mom though, but they literally grew up together ever since we had them. But he slowly becoming more and more of a loverboy!</div>
+            <div class="bubble incoming">Ariona: I always worry that Sylvie might want a sibling especially since I adopted her and she had them but now she's too spoiled she territorial to have one! 😂</div>
+            <div class="bubble outgoing">Kendall: Yeah I think she might enjoy her life a little bit way too much to share everything with another cat, unless you introduced them to one another in a new neutral space.
+Winston's the exact same way though, but also with certain humans, I don't think he likes to share me with anyone even his own sister when she was around lol. I will say I think he's a lot better now since he's older. I think they'd benefit from a friend to play with when we have to be adults on a daily basis</div>
+            <div class="bubble incoming">Ariona @ Wednesday May 6 11:19 AM: Yeah she's territorial but at the same time she likes when others come over and she likes to pretend that she is not obsessed with me. Plus she does fine with me and spaz, she's an oddball.</div>
+            <div class="bubble incoming">Ariona: Yeah she's territorial but at the same time she likes when others come over and she likes to pretend that she is not obsessed with me. Plus she does fine with me and spaz, she's an oddball.</div>
+            <div class="bubble outgoing">Kendall: It sounds like she can coexist with others well, which is good but also loves to be a little bit dramatic when the attention isn't there and I'd say Winston is definitely in that same boat. I work from home two days out of the week so I definitely get what you mean, hell stretch himself to tap my arm or shoulder when he's fed up enough.</div>
+            <div class="bubble outgoing">Kendall: Speaking of work though what sparked your interest of wanting to be a therapist?</div>
+            <div class="bubble incoming">Ariona: My mom. She's a chef and when I was in high school she had an accident where she suffered from a burn on her hand and she said the thing that was most helpful was her occupational therapist. I knew I wanted to work in a health related profession but after researching different therapists I gravitated towards OT because of its principles with a holistic approach and how we support people throughout their lifespan. Plus I have a background with being a personal care aid for Parkinson's clients so it was a good fit for me</div>
+            <div class="bubble outgoing">Kendall: Despite your mom having the accident, that's a sweet full circle moment that put you on the path you are today! I really like that though it seems like you're definitely a person who puts their all into everything you do, and just have a genuine care to help any and everyone! How long have you been in your position, and how'd you get your background for care in Parkinson's, through school when you were younger?</div>
+            <div class="bubble incoming">Ariona: Thank you! So I have been an OT for three years now, I currently work with kids specializing in feeding though and no longer work with Parkinson's.
+My background with that was just from my grandpa. He had Parkinson's since I was little and I became one of his main caregivers and when looking for a job after college had that experience and so I got paired with caregiving for clients that also had Parkinson's</div>
+            <div class="bubble outgoing">Kendall: That's really neat! It sounds like you really achieved what you set out to do since you were younger which we love to see!! I know that connection with your grandpa must be really special to you, and I'm sure you had a lot of memorable moments while caring for him! Do you think you'd like to transition into another area within OT or do you like where you're currently at? Also where'd you end up going to college?</div>
+            <div class="bubble incoming">Ariona: I would love to transition from what I do now, I just sort of ended up with this position but I have always wanted to work in inpatient hospitals with physical disabilities and geriatrics and I really am into supporting aging in place with home modification. I went to Lenoir Rhyne in hickory.
+What do you do for work?</div>
+            <div class="bubble outgoing">Kendall: That's definitely fair and also sounds like a very interesting area to pivot to as well! It seems like it might be more hands on? Is that a harder area to get into, or does it just take a little bit of time/experience.
+Ahhh okay I went to UNCC for computer engineering undergrad and grad and now I work for Wells Fargo in Credit Cards. I work in middleware so my team develops APIs that allow for various features/perks related to credit cards. Lol in short yes I am a proud nerd</div>
+            <div class="bubble incoming">Ariona: Depending on how much expertise want and how deep Ill have to get certifications specializing in it, so I'll have to take a certain amount of courses and gather a certain number of continuing education credits to support it.
+Everyone is a nerd about something 😂. How'd you get into that specifically?</div>
+            <div class="bubble outgoing">Kendall: Ahhh okay that makes sense, hopefully you could get like scholarship or a tuition reimbursement program from your job to continue your schooling because I know those courses/certifications can sometimes be pricey! But from what I gathered so far I know you're more than capable of putting in the work to achieve it!
+It's a cute little story of how I got into computers! So I used to watch my dad rebuild computers when I was a kid which initially sparked my interest, and then my mom always tells me that when I was a baby I always said I wanted to go to "com", but that passion always stuck with me! So as I grew up I had a curiosity as to how do computers actually work so I then majored in computer engineering. I'm much more interested in the hardware related side so like embedded systems and robotics (see a lot of nerd talk 😊) but I took the first job opportunity out of college so here I am!</div>
+            <div class="bubble outgoing">Kendall: I'm also a big gamer too so honestly a lot of things related to technology in general just kinda fascinate me!</div>
+            <div class="bubble incoming">Ariona: Yea, love my field. Hate how expensive it is to stay in my field and do more in it.
+That's really cool. Have you ever looked into building your own PC or things like that?</div>
+            <div class="bubble outgoing">Kendall: How often do you any of your certificates require renewal?? If you work part of a practice/group do they not typically offer any assistance to do more in your field?
+Thank you! I really want to build my own PC one day but I want to wait until I have a house so I don't have to worry about moving it too often, but I've built some built/programmed some autonomous robots alongside other random devices back in college</div>
+            <div class="bubble outgoing">Kendall: If you're also on board with it I can give you my number so we can continue the conversation there, it's 3364798061</div>
+          </div>
+        </div>
+
+        <a class="back-link" href="../index.html">Back to directory</a>
+        <div class="home-indicator"></div>
+      </div>
+    </div>
+  </body>
+</html>
